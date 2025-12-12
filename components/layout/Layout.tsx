@@ -14,6 +14,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
 
   useEffect(() => {
+    if (loading) return // Don't redirect while still loading
+
     // If no user and not on login page → redirect to login
     if (!user && pathname !== '/login') {
       router.replace('/login') // Use replace instead of push
@@ -24,7 +26,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     if (user && pathname === '/login') {
       router.replace('/dashboard')
     }
-  }, [user, loading, pathname, router])
+  }, [user, loading, pathname]) // Remove router from dependencies
 
   if (loading) {
     return (

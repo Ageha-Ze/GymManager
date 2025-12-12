@@ -678,49 +678,53 @@ export default function CheckInsPage() {
                                 <p className="font-bold text-xl text-blue-800 truncate">
                                   {checkIn.members?.full_name || 'Unknown'}
                                 </p>
-                                <p className="text-lg text-blue-600">
+                                <p className="text-sm sm:text-base text-blue-600">
                                   Check-in: {format(new Date(checkIn.check_in_time), 'HH:mm', { locale: idLocale })}
                                 </p>
-                                <p className="text-base text-blue-500">
+                                <p className="text-xs sm:text-sm text-blue-500">
                                   Durasi: {checkIn.check_out_time
                                     ? calculateDuration(checkIn.check_in_time, checkIn.check_out_time)
-                                    : calculateDuration(checkIn.check_in_time, new Date().toISOString()) + ' (masih aktif)'}
+                                    : calculateDuration(checkIn.check_in_time, new Date().toISOString()) + ' (aktif)'}
                                 </p>
                               </div>
                             </div>
 
-                            <div className="flex flex-col gap-2 items-end">
-                              {checkIn.check_out_time ? (
-                                <div className="flex flex-col items-end">
-                                  <Badge variant="secondary" className="text-lg px-4 py-2 bg-gray-500 text-white font-semibold rounded-full">
-                                    Checked Out
-                                  </Badge>
-                                  <p className="text-base text-blue-600">
-                                    {format(new Date(checkIn.check_out_time), 'HH:mm', { locale: idLocale })}
-                                  </p>
-                                </div>
-                              ) : (
-                                <Button
-                                  onClick={() => handleCheckOut(checkIn.id)}
-                                  size="sm"
-                                  variant="outline"
-                                  className="text-lg px-4 py-2 border-2 border-orange-300 text-orange-700 hover:bg-orange-50 rounded-xl transition-all duration-300 cursor-pointer"
-                                >
-                                  Check Out
-                                </Button>
-                              )}
+                            <div className="flex flex-col sm:flex-row sm:items-end gap-2 sm:gap-3">
+                              {/* Status & Check-out Button */}
+                              <div className="flex flex-col items-end gap-2 sm:min-w-[140px]">
+                                {checkIn.check_out_time ? (
+                                  <div className="flex flex-col items-end text-center sm:text-right">
+                                    <Badge variant="secondary" className="text-sm sm:text-base px-2 sm:px-3 py-1 sm:py-1.5 bg-gray-500 text-white font-semibold rounded-full mb-1">
+                                      Checked Out
+                                    </Badge>
+                                    <span className="text-xs sm:text-sm text-blue-600 font-medium">
+                                      {format(new Date(checkIn.check_out_time), 'HH:mm', { locale: idLocale })}
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <Button
+                                    onClick={() => handleCheckOut(checkIn.id)}
+                                    size="sm"
+                                    variant="outline"
+                                    className="w-full sm:w-auto text-sm sm:text-base px-3 sm:px-4 py-2 border-2 border-orange-300 text-orange-700 hover:bg-orange-50 rounded-lg sm:rounded-xl transition-all duration-300 cursor-pointer font-semibold"
+                                  >
+                                    Check Out
+                                  </Button>
+                                )}
 
-                              <Button
-                                onClick={() => {
-                                  setCheckInToDelete(checkIn)
-                                  setIsConfirmDeleteOpen(true)
-                                }}
-                                size="sm"
-                                variant="ghost"
-                                className="text-lg px-4 py-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-xl transition-all duration-300 cursor-pointer"
-                              >
-                                <Trash2 className="w-5 h-5" />
-                              </Button>
+                                <Button
+                                  onClick={() => {
+                                    setCheckInToDelete(checkIn)
+                                    setIsConfirmDeleteOpen(true)
+                                  }}
+                                  size="sm"
+                                  variant="ghost"
+                                  className="w-full sm:w-auto text-sm px-3 py-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg sm:rounded-xl transition-all duration-300 cursor-pointer"
+                                >
+                                  <Trash2 className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-0" />
+                                  <span className="sm:hidden">Hapus</span>
+                                </Button>
+                              </div>
                             </div>
                           </div>
                         ))}

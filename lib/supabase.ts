@@ -8,6 +8,14 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    // Enable automatic session refresh
+    autoRefreshToken: true,
+    persistSession: true,
+    // Refresh tokens 5 minutes before expiry
+    detectSessionInUrl: false,
+    flowType: 'pkce'
+  },
   global: {
     // Suppress fetch - we handle retries at the component level
     headers: {

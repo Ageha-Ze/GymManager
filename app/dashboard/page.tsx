@@ -81,6 +81,7 @@ export default function DashboardPage() {
       console.log('Starting fetchDashboardData')
       setRefreshing(true)
 
+      // Parallel fetch with optimization
       const [members, activeMembers, revenue, checkIns, expiring, recent] = await Promise.all([
         fetchTotalMembers(),
         fetchActiveMembers(),
@@ -102,8 +103,14 @@ export default function DashboardPage() {
       setExpiringMembers(expiring)
       setRecentCheckIns(recent)
 
-      // Fetch chart data
-      await fetchChartData(members, activeMembers)
+      // Set pie data immediately since we have the numbers
+      setPieData([
+        { name: 'Aktif', value: activeMembers },
+        { name: 'Tidak Aktif', value: members - activeMembers }
+      ])
+
+      // Fetch chart data in background (don't await to speed up initial load)
+      fetchChartData(members, activeMembers).catch(err => console.error('Chart data loading error:', err))
 
     } catch (error) {
       console.error('Error in fetchDashboardData:', error)
@@ -124,8 +131,9 @@ export default function DashboardPage() {
 
   const fetchActiveMembers = async () => {
     const { data } = await supabase
-      .from('v_active_members')
+      .from('members')
       .select('id', { count: 'exact' })
+      .eq('is_active', true)
     return data?.length || 0
   }
 
@@ -153,12 +161,63 @@ export default function DashboardPage() {
   }
 
   const fetchExpiringMembers = async () => {
-    const { data } = await supabase
-      .from('v_expiring_members')
-      .select('*')
-      .order('days_remaining', { ascending: true })
-      .limit(5)
-    return data || []
+    try {
+      // Query expiring memberships (next 10 days only)
+      const today = new Date()
+      const futureDate = new Date()
+      futureDate.setDate(today.getDate() + 10) // Check next 10 days
+
+      const { data, error } = await supabase
+        .from('member_memberships')
+        .select(`
+          id,
+          member_id,
+          package_id,
+          start_date,
+          end_date,
+          status,
+          members!inner (
+            id,
+            member_code,
+            full_name,
+            phone,
+            photo_url
+          ),
+          membership_packages!inner (
+            package_name
+          )
+        `)
+        .eq('status', 'active')
+        .gte('end_date', today.toISOString().split('T')[0])
+        .lte('end_date', futureDate.toISOString().split('T')[0])
+        .order('end_date', { ascending: true })
+        .limit(5)
+
+      if (error) {
+        console.error('Error fetching expiring members:', error)
+        return []
+      }
+
+      // Transform data to match expected interface
+      const expiringMembers = data?.map((item: any) => {
+        const endDate = new Date(item.end_date)
+        const today = new Date()
+        const daysDiff = Math.ceil((endDate.getTime() - today.getTime()) / (1000 * 3600 * 24))
+
+        return {
+          id: item.members.id,
+          member_code: item.members.member_code,
+          full_name: item.members.full_name,
+          end_date: item.end_date,
+          days_remaining: Math.max(0, daysDiff)
+        }
+      }) || []
+
+      return expiringMembers
+    } catch (error) {
+      console.error('Error in fetchExpiringMembers:', error)
+      return []
+    }
   }
 
   const fetchRecentCheckIns = async () => {
@@ -347,7 +406,7 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{expiringMembers.length}</div>
-              <p className="text-xs opacity-80 mt-1">Dalam 7 hari ke depan</p>
+              <p className="text-xs opacity-80 mt-1">Dalam 10 hari ke depan</p>
             </CardContent>
           </Card>
         </div>
