@@ -1,7 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-import { toast } from 'sonner'
+import React, { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react'
 
 interface NetworkContextType {
   isOnline: boolean
@@ -29,21 +28,18 @@ export const fetchWithRetry = async (
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
-      // Check network connectivity before attempting
       if (!navigator.onLine) {
         throw new Error('No internet connection')
       }
 
       const response = await fetch(url, options)
 
-      // Handle HTTP errors with retry for server errors (5xx)
       if (response.status >= 500 && response.status < 600 && attempt < maxRetries) {
         console.warn(`[NETWORK] Server error ${response.status}, retrying... (attempt ${attempt + 1}/${maxRetries + 1})`)
-        await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, attempt))) // Exponential backoff
+        await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, attempt)))
         continue
       }
 
-      // Consider 4xx errors as permanent failures (don't retry)
       if (response.status >= 400 && response.status < 500) {
         console.error(`[NETWORK] Client error ${response.status}, no retry`)
         return response
@@ -54,7 +50,6 @@ export const fetchWithRetry = async (
       lastError = error as Error
       console.warn(`[NETWORK] Attempt ${attempt + 1} failed:`, error)
 
-      // Don't retry on network unavailability or non-network errors
       if (!navigator.onLine || !(error as Error).message?.includes('fetch')) {
         break
       }
@@ -73,6 +68,7 @@ export const NetworkProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [isOnline, setIsOnline] = useState(true)
   const [isConnected, setIsConnected] = useState(true)
   const [retryCount, setRetryCount] = useState(0)
+  const isTestingRef = useRef(false)
 
   const forceRetry = () => {
     console.log('[NETWORK] Manual retry triggered')
@@ -93,7 +89,6 @@ export const NetworkProvider: React.FC<{ children: ReactNode }> = ({ children })
       setIsConnected(false)
     }
 
-    // Initial state
     setIsOnline(navigator.onLine)
 
     window.addEventListener('online', handleOnline)
@@ -105,55 +100,55 @@ export const NetworkProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
   }, [])
 
-  // Test connection periodically (optimized)
+  // Test connection periodically - FIXED
   useEffect(() => {
-    let isTestingConnection = false
-
     const testConnection = async () => {
-      // Prevent concurrent connection tests
-      if (isTestingConnection || !navigator.onLine) {
+      // Skip if already testing or offline
+      if (isTestingRef.current || !navigator.onLine) {
         return
       }
 
-      isTestingConnection = true
+      isTestingRef.current = true
 
       try {
         const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 3000) // 3 second timeout
+        const timeoutId = setTimeout(() => controller.abort(), 5000) // Increased to 5 seconds
 
-        const testResponse = await fetch('/api/test-connection', {
+        // Test with a simple request that won't be blocked by CSP
+        const testResponse = await fetch(window.location.origin + '/favicon.ico', {
           method: 'HEAD',
-          headers: { 'Cache-Control': 'no-cache' },
+          cache: 'no-store',
           signal: controller.signal,
         })
 
         clearTimeout(timeoutId)
 
-        const hasConnectivity = testResponse.ok
+        const hasConnectivity = testResponse.ok || testResponse.status === 404 // 404 is fine, means server responded
 
-        if (hasConnectivity && !isConnected) {
-          setIsConnected(true)
-          console.log('[NETWORK] Connection restored')
-        } else if (!hasConnectivity && isConnected) {
-          setIsConnected(false)
-          console.log('[NETWORK] Connection lost')
+        if (hasConnectivity !== isConnected) {
+          setIsConnected(hasConnectivity)
+          console.log(`[NETWORK] Connection ${hasConnectivity ? 'restored' : 'lost'}`)
         }
       } catch (error) {
         console.warn('[NETWORK] Connection test failed:', error)
-        if (isConnected) {
+        // Only set to disconnected if we're currently connected
+        // This prevents false negatives
+        if (isConnected && navigator.onLine) {
           setIsConnected(false)
         }
       } finally {
-        isTestingConnection = false
+        isTestingRef.current = false
       }
     }
 
-    // Test immediately and then every 30 seconds (reduced frequency)
+    // Test immediately on mount and after retry
     testConnection()
+
+    // Then test every 30 seconds
     const interval = setInterval(testConnection, 30000)
 
     return () => clearInterval(interval)
-  }, [isConnected, retryCount])
+  }, [retryCount]) // Removed isConnected from deps to prevent loop
 
   return (
     <NetworkContext.Provider value={{ isOnline, isConnected, retryCount, forceRetry }}>

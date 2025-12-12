@@ -286,13 +286,21 @@ export default function MembershipDialog({ open, onClose, onSuccess, member = nu
                 <SelectTrigger className="h-12 text-base border-blue-200 focus:border-orange-400 rounded-xl bg-blue-100 cursor-pointer">
                   <SelectValue placeholder="Pilih paket membership" />
                 </SelectTrigger>
-                <SelectContent className="bg-white border-2 border-blue-200 rounded-lg shadow-lg">
-                  {packages.map((pkg) => (
-                    <SelectItem key={pkg.id} value={pkg.id}>
-                      {pkg.package_name} - {formatCurrency(pkg.price)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+ <SelectContent 
+  className="bg-white border-2 border-blue-200 rounded-lg shadow-lg max-h-[300px]"
+  position="popper"
+  sideOffset={5}
+>
+  {packages.map((pkg) => (
+    <SelectItem 
+      key={pkg.id} 
+      value={pkg.id}
+      className="cursor-pointer"
+    >
+      {pkg.package_name} - {formatCurrency(pkg.price)}
+    </SelectItem>
+  ))}
+</SelectContent>
               </Select>
             </div>
 

@@ -514,8 +514,9 @@ export default function CheckInsPage() {
         <Button
           onClick={searchMembers}
           disabled={searching}
-          className="h-14 px-8 text-lg font-semibold bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white rounded-xl cursor-pointer shadow-lg transition-all duration-300 transform hover:scale-105"
+          className="h-14 px-4 sm:px-8 text-base sm:text-lg font-semibold bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white rounded-xl cursor-pointer shadow-lg transition-all duration-300 transform hover:scale-105 flex-shrink-0"
         >
+          <Search className="w-4 h-4 mr-2" />
           {searching ? 'Mencari...' : 'Cari'}
         </Button>
                     </div>
@@ -665,70 +666,71 @@ export default function CheckInsPage() {
                       </div>
                     ) : (
                       <div className="space-y-6 max-h-96 overflow-y-auto">
-                        {todayCheckIns.map((checkIn) => (
-                          <div key={checkIn.id} className="flex items-center justify-between p-4 bg-blue-50 rounded-xl border border-blue-200 hover:bg-blue-100 transition-colors duration-200">
-                            <div className="flex items-center gap-4">
-                              <Avatar className="w-14 h-14 border-4 border-orange-300 shadow-lg">
-                                <AvatarImage src={checkIn.members?.photo_url || undefined} />
-                                <AvatarFallback className="bg-gradient-to-br from-blue-500 to-orange-500 text-white font-bold text-lg">
-                                  {getInitials(checkIn.members?.full_name || '')}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div className="flex-1 min-w-0">
-                                <p className="font-bold text-xl text-blue-800 truncate">
-                                  {checkIn.members?.full_name || 'Unknown'}
-                                </p>
-                                <p className="text-sm sm:text-base text-blue-600">
-                                  Check-in: {format(new Date(checkIn.check_in_time), 'HH:mm', { locale: idLocale })}
-                                </p>
-                                <p className="text-xs sm:text-sm text-blue-500">
-                                  Durasi: {checkIn.check_out_time
-                                    ? calculateDuration(checkIn.check_in_time, checkIn.check_out_time)
-                                    : calculateDuration(checkIn.check_in_time, new Date().toISOString()) + ' (aktif)'}
-                                </p>
-                              </div>
-                            </div>
+  {todayCheckIns.map((checkIn) => (
+    <div key={checkIn.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 bg-blue-50 rounded-xl border border-blue-200 hover:bg-blue-100 transition-colors duration-200">
+      {/* Left Section - Avatar & Info */}
+      <div className="flex items-center gap-3 min-w-0 flex-1">
+        <Avatar className="w-12 h-12 sm:w-14 sm:h-14 border-4 border-orange-300 shadow-lg shrink-0">
+          <AvatarImage src={checkIn.members?.photo_url || undefined} />
+          <AvatarFallback className="bg-gradient-to-br from-blue-500 to-orange-500 text-white font-bold text-lg">
+            {getInitials(checkIn.members?.full_name || '')}
+          </AvatarFallback>
+        </Avatar>
+        <div className="min-w-0 flex-1">
+          <p className="font-bold text-lg sm:text-xl text-blue-800 truncate">
+            {checkIn.members?.full_name || 'Unknown'}
+          </p>
+          <p className="text-sm text-blue-600">
+            Check-in: {format(new Date(checkIn.check_in_time), 'HH:mm', { locale: idLocale })}
+          </p>
+          <p className="text-xs sm:text-sm text-blue-500">
+            Durasi: {checkIn.check_out_time
+              ? calculateDuration(checkIn.check_in_time, checkIn.check_out_time)
+              : calculateDuration(checkIn.check_in_time, new Date().toISOString()) + ' (aktif)'}
+          </p>
+        </div>
+      </div>
 
-                            <div className="flex flex-col sm:flex-row sm:items-end gap-2 sm:gap-3">
-                              {/* Status & Check-out Button */}
-                              <div className="flex flex-col items-end gap-2 sm:min-w-[140px]">
-                                {checkIn.check_out_time ? (
-                                  <div className="flex flex-col items-end text-center sm:text-right">
-                                    <Badge variant="secondary" className="text-sm sm:text-base px-2 sm:px-3 py-1 sm:py-1.5 bg-gray-500 text-white font-semibold rounded-full mb-1">
-                                      Checked Out
-                                    </Badge>
-                                    <span className="text-xs sm:text-sm text-blue-600 font-medium">
-                                      {format(new Date(checkIn.check_out_time), 'HH:mm', { locale: idLocale })}
-                                    </span>
-                                  </div>
-                                ) : (
-                                  <Button
-                                    onClick={() => handleCheckOut(checkIn.id)}
-                                    size="sm"
-                                    variant="outline"
-                                    className="w-full sm:w-auto text-sm sm:text-base px-3 sm:px-4 py-2 border-2 border-orange-300 text-orange-700 hover:bg-orange-50 rounded-lg sm:rounded-xl transition-all duration-300 cursor-pointer font-semibold"
-                                  >
-                                    Check Out
-                                  </Button>
-                                )}
+      {/* Right Section - Actions */}
+      <div className="flex flex-col gap-2 w-full sm:w-auto sm:min-w-[140px]">
+        {/* Status or Check Out Button */}
+        {checkIn.check_out_time ? (
+          <div className="flex flex-col items-start sm:items-end">
+            <Badge variant="secondary" className="text-sm px-3 py-1 bg-gray-500 text-white font-semibold rounded-full mb-1">
+              Checked Out
+            </Badge>
+            <span className="text-xs sm:text-sm text-blue-600 font-medium">
+              {format(new Date(checkIn.check_out_time), 'HH:mm', { locale: idLocale })}
+            </span>
+          </div>
+        ) : (
+          <Button
+            onClick={() => handleCheckOut(checkIn.id)}
+            size="sm"
+            variant="outline"
+            className="w-full text-sm px-3 py-2 border-2 border-orange-300 text-orange-700 hover:bg-orange-50 rounded-lg transition-all duration-300 cursor-pointer font-semibold whitespace-nowrap"
+          >
+            Check Out
+          </Button>
+        )}
 
-                                <Button
-                                  onClick={() => {
-                                    setCheckInToDelete(checkIn)
-                                    setIsConfirmDeleteOpen(true)
-                                  }}
-                                  size="sm"
-                                  variant="ghost"
-                                  className="w-full sm:w-auto text-sm px-3 py-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg sm:rounded-xl transition-all duration-300 cursor-pointer"
-                                >
-                                  <Trash2 className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-0" />
-                                  <span className="sm:hidden">Hapus</span>
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+        {/* Delete Button */}
+        <Button
+          onClick={() => {
+            setCheckInToDelete(checkIn)
+            setIsConfirmDeleteOpen(true)
+          }}
+          size="sm"
+          variant="ghost"
+          className="w-full text-sm px-3 py-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all duration-300 cursor-pointer flex items-center justify-center sm:justify-start gap-2"
+        >
+          <Trash2 className="w-4 h-4" />
+          <span>Hapus</span>
+        </Button>
+      </div>
+    </div>
+  ))}
+</div>
                     )}
                   </CardContent>
                 </Card>
