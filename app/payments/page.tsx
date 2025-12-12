@@ -209,66 +209,66 @@ export default function PaymentsPage() {
           <div className="absolute inset-0 bg-gradient-to-r from-red-400/30 via-pink-400/30 to-orange-400/30 animate-pulse"></div>
           <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
             <div className="flex items-center gap-4">
-              <DollarSign className="w-12 h-12 text-red-200" />
+              <DollarSign className="w-8 h-8 sm:w-12 sm:h-12 text-red-200" />
               <div>
-                <h1 className="text-4xl font-bold">Pembayaran</h1>
-                <p className="text-xl text-red-100 mt-2">
+                <h1 className="text-2xl sm:text-4xl font-bold">Pembayaran</h1>
+                <p className="text-lg sm:text-xl text-red-100 mt-2">
                   Kelola dan pantau semua transaksi pembayaran
                 </p>
               </div>
             </div>
             <Button
               onClick={() => setIsAddDialogOpen(true)}
-              className="bg-white/20 backdrop-blur-sm text-white border-white/30 hover:bg-white/30 transition-all duration-300 rounded-xl px-6 py-4 text-lg font-semibold hover:cursor-pointer"
+              className="bg-white/20 backdrop-blur-sm text-white border-white/30 hover:bg-white/30 transition-all duration-300 rounded-xl px-4 sm:px-6 py-3 sm:py-4 text-sm sm:text-lg font-semibold hover:cursor-pointer w-full sm:w-auto justify-center sm:justify-start"
             >
-              <Plus className="w-5 h-5 mr-2" />
-              Catat Pembayaran
+              <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0" />
+              <span className="text-center sm:text-left">Catat Pembayaran</span>
             </Button>
           </div>
         </div>
 
         {/* Summary Cards */}
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-3">
           <Card className="card-simple border-primary-green hover:cursor-pointer">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-bold flex items-center gap-2 text-primary-green">
-                <DollarSign className="h-5 w-5" />
+            <CardHeader className="pb-2 px-4 sm:px-6">
+              <CardTitle className="text-base sm:text-lg font-bold flex items-center gap-2 text-primary-green">
+                <DollarSign className="h-4 w-4 sm:h-5 sm:w-5" />
                 Total Pendapatan
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-6 pt-0">
-              <div className="text-3xl font-bold text-primary-green mb-2">{formatCurrency(totalRevenue)}</div>
-              <p className="text-sm text-gray-600">
+            <CardContent className="px-4 sm:px-6 pt-0 pb-4 sm:pb-6">
+              <div className="text-2xl sm:text-3xl font-bold text-primary-green mb-1 sm:mb-2">{formatCurrency(totalRevenue)}</div>
+              <p className="text-xs sm:text-sm text-gray-600">
                 Dari semua pembayaran yang sudah diterima
               </p>
             </CardContent>
           </Card>
 
           <Card className="card-simple border-primary-teal hover:cursor-pointer">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-bold flex items-center gap-2 text-primary-teal">
-                <CheckCircle className="h-5 w-5" />
+            <CardHeader className="pb-2 px-4 sm:px-6">
+              <CardTitle className="text-base sm:text-lg font-bold flex items-center gap-2 text-primary-teal">
+                <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5" />
                 Pembayaran Sudah Dibayar
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-6 pt-0">
-              <div className="text-3xl font-bold text-primary-teal mb-2">{paidPayments}</div>
-              <p className="text-sm text-gray-600">
+            <CardContent className="px-4 sm:px-6 pt-0 pb-4 sm:pb-6">
+              <div className="text-2xl sm:text-3xl font-bold text-primary-teal mb-1 sm:mb-2">{paidPayments}</div>
+              <p className="text-xs sm:text-sm text-gray-600">
                 Transaksi yang telah selesai
               </p>
             </CardContent>
           </Card>
 
           <Card className="card-simple border-primary-orange hover:cursor-pointer">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-bold flex items-center gap-2 text-primary-orange">
-                <XCircle className="h-5 w-5" />
+            <CardHeader className="pb-2 px-4 sm:px-6">
+              <CardTitle className="text-base sm:text-lg font-bold flex items-center gap-2 text-primary-orange">
+                <XCircle className="h-4 w-4 sm:h-5 sm:w-5" />
                 Pembayaran Tertunda
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-6 pt-0">
-              <div className="text-3xl font-bold text-primary-orange mb-2">{pendingPayments}</div>
-              <p className="text-sm text-gray-600">
+            <CardContent className="px-4 sm:px-6 pt-0 pb-4 sm:pb-6">
+              <div className="text-2xl sm:text-3xl font-bold text-primary-orange mb-1 sm:mb-2">{pendingPayments}</div>
+              <p className="text-xs sm:text-sm text-gray-600">
                 Menunggu konfirmasi pembayaran
               </p>
             </CardContent>
