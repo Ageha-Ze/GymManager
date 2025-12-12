@@ -3,11 +3,49 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  /* Vibrant and colorful theme */
+  --primary-red: #f56565;
+  --primary-blue: #4299e1;
+  --primary-green: #48bb78;
+  --primary-purple: #a855f7;
+  --primary-orange: #f6ad55;
+  --primary-teal: #4fd1c0;
+  --primary-pink: #f687b3;
+  --primary-indigo: #667eea;
+  --primary-yellow: #ed8936;
+  --primary-cyan: #0bc5ea;
+  --primary-rose: #f56565;
+  --primary-emerald: #34d399;
+  --secondary-purple: #c084fc;
+  --secondary-blue: #93c5fd;
+  --accent-gray: #4a5568;
+  --light-blue: #f0f8ff;
+  --light-green: #f0fdf4;
+  --light-purple: #fef3ff;
+  --light-pink: #fdf2f8;
+  --light-yellow: #fffbeb;
+  --light-cyan: #e0f2fe;
+  --light-orange: #fff7ed;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary-red: var(--primary-red);
+  --color-primary-blue: var(--primary-blue);
+  --color-primary-green: var(--primary-green);
+  --color-primary-purple: var(--primary-purple);
+  --color-primary-orange: var(--primary-orange);
+  --color-primary-teal: var(--primary-teal);
+  --color-primary-pink: var(--primary-pink);
+  --color-primary-indigo: var(--primary-indigo);
+  --color-primary-yellow: var(--primary-yellow);
+  --color-accent-gray: var(--accent-gray);
+  --color-light-blue: var(--light-blue);
+  --color-light-green: var(--light-green);
+  --color-light-purple: var(--light-purple);
+  --color-light-pink: var(--light-pink);
+  --color-light-yellow: var(--light-yellow);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -22,5 +60,112 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* Simple and professional hover effects */
+.menu-item:hover {
+  cursor: pointer;
+}
+
+/* Custom button styles for simplicity */
+.btn-primary {
+  @apply bg-primary-blue hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+}
+
+.btn-secondary {
+  @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+}
+
+.btn-success {
+  @apply bg-primary-green hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+}
+
+.btn-warning {
+  @apply bg-primary-orange hover:bg-orange-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+}
+
+.btn-danger {
+  @apply bg-primary-red hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+}
+
+/* Card styles */
+.card-simple {
+  @apply bg-white rounded-xl shadow-lg border-0 p-6 transition-shadow duration-300 hover:shadow-xl;
+}
+
+/* Page backgrounds */
+.page-bg-dashboard {
+  background: linear-gradient(135deg, #e6f7ff 0%, #f0f9ff 100%);
+}
+
+.page-bg-members {
+  background: linear-gradient(135deg, #fef6f0 0%, #fff7ed 100%);
+}
+
+.page-bg-checkins {
+  background: linear-gradient(135deg, #f0fdf4 0%, #f7fdea 100%);
+}
+
+.page-bg-payments {
+  background: linear-gradient(135deg, #fef2f2 0%, #fef9f9 100%);
+}
+
+.page-bg-packages {
+  background: linear-gradient(135deg, #faf5ff 0%, #fbf7ff 100%);
+}
+
+/* Custom date picker styling */
+input[type="date"] {
+  /* Remove default browser styling */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Chrome, Safari, Edge */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  background: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%236b7280'%3E%3Cpath d='M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-1.99.9-1.99 2L3 19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM5 19V7h14v12H5z'/%3E%3Cpath fill-rule='evenodd' d='M8 10h2v2H8v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2zM8 14h2v2H8v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2z'/%3E%3C/svg%3E") no-repeat center;
+  background-size: 16px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+  border-radius: 0.5rem;
+  padding: 0.25rem;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+  background-color: rgba(249, 115, 22, 0.1);
+  transform: scale(1.05);
+}
+
+input[type="date"]:focus::-webkit-calendar-picker-indicator,
+input[type="date"]:focus-within::-webkit-calendar-picker-indicator {
+  opacity: 1;
+  background-color: rgba(249, 115, 22, 0.1);
+}
+
+/* Firefox */
+input[type="date"] {
+  /* Additional Firefox-specific styling if needed */
+}
+
+/* Calendar popup styling (limited browser support) */
+::-webkit-calendar-picker-indicator:focus,
+input[type="date"]:focus::-webkit-calendar-picker-indicator {
+  outline: none;
+}
+
+/* Enhanced date input styling for consistent theme */
+input[type="date"].bg-blue-50 {
+  background-image: linear-gradient(135deg, rgba(239, 246, 255, 0.8), rgba(219, 234, 254, 0.8));
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+input[type="date"].bg-blue-50:focus,
+input[type="date"].bg-blue-50:focus-within {
+  background-image: linear-gradient(135deg, rgba(239, 246, 255, 1), rgba(219, 234, 254, 1));
+  border-color: rgb(249, 115, 22) !important;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1), 0 1px 3px rgba(0, 0, 0, 0.1);
 }
